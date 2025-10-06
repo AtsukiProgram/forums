@@ -586,3 +586,8 @@ body {
 @media (max-width: 400px) {
   .title { font-size: 12px; }
 }
+.title {
+  white-space: pre-line;
+  line-height: 1.2;
+  word-break: keep-all;
+}
