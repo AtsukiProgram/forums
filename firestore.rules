@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == userId;
+    }
+    
+    // Threads collection
+    match /threads/{threadId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && 
+        (resource.data.creatorId == request.auth.uid || 
+         get(/databases//documents/users/).data.isAdmin == true);
+    }
+    
+    // Messages collection
+    match /messages/{messageId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update: if request.auth.uid == resource.data.userId;
+    }
+    
+    // Replies collection
+    match /replies/{replyId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update: if request.auth.uid == resource.data.userId;
+    }
+  }
+}
