@@ -591,3 +591,8 @@ body {
   line-height: 1.2;
   word-break: keep-all;
 }
+.thread-password {
+  color: #ba4a00;
+  font-size: 13px;
+  margin-left: 4px;
+}

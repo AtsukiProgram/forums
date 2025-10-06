@@ -1090,9 +1090,14 @@ function showError(element, message) {
 }
 
 function escapeHtml(text) {
+    if (!text) return '';
     const div = document.createElement('div');
     div.textContent = text;
-    return div.innerHTML;
+    let html = div.innerHTML;
+    html = html.replace(/  /g, ' &nbsp;');
+    html = html.replace(/ $/gm, ' &nbsp;');
+    html = html.replace(/(\r?\n)/g, '<br>');
+    return html;
 }
 
 // ===================================================================
@@ -1117,3 +1122,5 @@ window.addEventListener('beforeunload', () => {
 });
 
 console.log('%c Forums アプリケーション初期化完了', 'color: #4CAF50; font-weight: bold; font-size: 16px');
+
+
