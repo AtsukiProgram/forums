@@ -565,3 +565,24 @@ body {
         padding: var(--spacing-lg);
     }
 }
+@media (max-width: 900px) {
+  .header-content { flex-direction: column; align-items: flex-start; }
+  .title { text-align: left; font-size: 18px; }
+  .toolbar { flex-direction: column; align-items: stretch; gap: 8px; }
+}
+
+@media (max-width: 600px) {
+  .header-content { flex-direction: column; align-items: flex-start; }
+  .title {
+    font-size: 14px;
+    line-height: 1.3;
+    white-space: pre-line;
+    word-break: break-word;
+    max-width: 100vw;
+  }
+  .main-content, .thread-detail { padding: 4px; }
+}
+
+@media (max-width: 400px) {
+  .title { font-size: 12px; }
+}
