@@ -1,6 +1,5 @@
 // ===================================================================
-// Forums アプリケーション - メインロジック（リアルタイム対応版）
-// ===================================================================
+// Forums アプリケーション - メインロジチE���E�リアルタイム対応版�E�E// ===================================================================
 
 import { auth, db } from './firebase-config.js';
 import {
@@ -32,8 +31,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 // ===================================================================
-// グローバル状態管理
-// ===================================================================
+// グローバル状態管琁E// ===================================================================
 let currentUser = null;
 let currentUserData = null;
 let currentThread = null;
@@ -41,14 +39,12 @@ let currentMessage = null;
 let currentSort = 'new';
 let searchQuery = '';
 
-// リアルタイムリスナーの管理
-let threadsUnsubscribe = null;
+// リアルタイムリスナ�Eの管琁Elet threadsUnsubscribe = null;
 let messagesUnsubscribe = null;
 let repliesUnsubscribe = null;
 
 // ===================================================================
-// 初期化
-// ===================================================================
+// 初期匁E// ===================================================================
 document.addEventListener('DOMContentLoaded', () => {
     console.log('%c アプリケーション初期化中...', 'color: #2196F3; font-weight: bold');
     setupEventListeners();
@@ -56,8 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===================================================================
-// 認証状態の監視
-// ===================================================================
+// 認証状態�E監要E// ===================================================================
 function setupAuthStateListener() {
     onAuthStateChanged(auth, async (user) => {
         if (user) {
@@ -80,18 +75,17 @@ async function loadUserData(uid) {
         const userDoc = await getDoc(doc(db, 'users', uid));
         if (userDoc.exists()) {
             currentUserData = { id: uid, ...userDoc.data() };
-            console.log('ユーザーデータ読み込み完了:', currentUserData.username, currentUserData.isAdmin ? '(管理者)' : '');
+            console.log('ユーザーチE�Eタ読み込み完亁E', currentUserData.username, currentUserData.isAdmin ? '(管琁E��E' : '');
         }
     } catch (error) {
-        console.error('ユーザーデータの読み込みエラー:', error);
+        console.error('ユーザーチE�Eタの読み込みエラー:', error);
     }
 }
 
 // ===================================================================
-// リアルタイムリスナーの設定
-// ===================================================================
+// リアルタイムリスナ�Eの設宁E// ===================================================================
 function setupRealtimeThreadsListener() {
-    // 既存のリスナーを解除
+    // 既存�Eリスナ�Eを解除
     if (threadsUnsubscribe) {
         threadsUnsubscribe();
     }
@@ -102,7 +96,7 @@ function setupRealtimeThreadsListener() {
     try {
         let q = collection(db, 'threads');
         
-        // ソート順に応じてクエリを調整
+        // ソート頁E��応じてクエリを調整
         if (currentSort === 'new') {
             q = query(q, orderBy('createdAt', 'desc'));
         } else if (currentSort === 'old') {
@@ -111,9 +105,8 @@ function setupRealtimeThreadsListener() {
             q = query(q, orderBy('messageCount', 'desc'));
         }
 
-        // リアルタイムリスナーを設定
-        threadsUnsubscribe = onSnapshot(q, (querySnapshot) => {
-            console.log('%c リアルタイム更新: スレッド一覧', 'color: #4CAF50; font-weight: bold');
+        // リアルタイムリスナ�Eを設宁E        threadsUnsubscribe = onSnapshot(q, (querySnapshot) => {
+            console.log('%c リアルタイム更新: スレチE��一覧', 'color: #4CAF50; font-weight: bold');
             
             let threads = [];
             querySnapshot.forEach((doc) => {
@@ -129,7 +122,7 @@ function setupRealtimeThreadsListener() {
                 });
             }
 
-            // 固定スレッドを最上部に
+            // 固定スレチE��を最上部に
             threads.sort((a, b) => {
                 if (a.isPinned && !b.isPinned) return -1;
                 if (!a.isPinned && b.isPinned) return 1;
@@ -138,18 +131,18 @@ function setupRealtimeThreadsListener() {
 
             displayThreads(threads);
         }, (error) => {
-            console.error('リアルタイムリスナーエラー:', error);
-            container.innerHTML = '<p style="text-align:center; padding: 40px; color: #f44336;">エラーが発生しました。</p>';
+            console.error('リアルタイムリスナ�Eエラー:', error);
+            container.innerHTML = '<p style="text-align:center; padding: 40px; color: #f44336;">エラーが発生しました、E/p>';
         });
 
     } catch (error) {
-        console.error('リアルタイムリスナー設定エラー:', error);
-        container.innerHTML = '<p style="text-align:center; padding: 40px; color: #f44336;">エラーが発生しました。</p>';
+        console.error('リアルタイムリスナ�E設定エラー:', error);
+        container.innerHTML = '<p style="text-align:center; padding: 40px; color: #f44336;">エラーが発生しました、E/p>';
     }
 }
 
 function setupRealtimeMessagesListener(threadId) {
-    // 既存のリスナーを解除
+    // 既存�Eリスナ�Eを解除
     if (messagesUnsubscribe) {
         messagesUnsubscribe();
     }
@@ -162,9 +155,8 @@ function setupRealtimeMessagesListener(threadId) {
                        where('threadId', '==', threadId), 
                        orderBy('createdAt', 'asc'));
 
-        // リアルタイムリスナーを設定
-        messagesUnsubscribe = onSnapshot(q, (querySnapshot) => {
-            console.log('%c リアルタイム更新: メッセージ一覧', 'color: #4CAF50; font-weight: bold');
+        // リアルタイムリスナ�Eを設宁E        messagesUnsubscribe = onSnapshot(q, (querySnapshot) => {
+            console.log('%c リアルタイム更新: メチE��ージ一覧', 'color: #4CAF50; font-weight: bold');
             
             const messages = [];
             querySnapshot.forEach((doc) => {
@@ -173,18 +165,18 @@ function setupRealtimeMessagesListener(threadId) {
 
             displayMessages(messages);
         }, (error) => {
-            console.error('メッセージリスナーエラー:', error);
-            container.innerHTML = '<p style="text-align:center; padding: 40px; color: #f44336;">エラーが発生しました。</p>';
+            console.error('メチE��ージリスナ�Eエラー:', error);
+            container.innerHTML = '<p style="text-align:center; padding: 40px; color: #f44336;">エラーが発生しました、E/p>';
         });
 
     } catch (error) {
-        console.error('メッセージリスナー設定エラー:', error);
-        container.innerHTML = '<p style="text-align:center; padding: 40px; color: #f44336;">エラーが発生しました。</p>';
+        console.error('メチE��ージリスナ�E設定エラー:', error);
+        container.innerHTML = '<p style="text-align:center; padding: 40px; color: #f44336;">エラーが発生しました、E/p>';
     }
 }
 
 function setupRealtimeRepliesListener(messageId) {
-    // 既存のリスナーを解除
+    // 既存�Eリスナ�Eを解除
     if (repliesUnsubscribe) {
         repliesUnsubscribe();
     }
@@ -197,8 +189,7 @@ function setupRealtimeRepliesListener(messageId) {
                        where('messageId', '==', messageId), 
                        orderBy('createdAt', 'asc'));
 
-        // リアルタイムリスナーを設定
-        repliesUnsubscribe = onSnapshot(q, (querySnapshot) => {
+        // リアルタイムリスナ�Eを設宁E        repliesUnsubscribe = onSnapshot(q, (querySnapshot) => {
             console.log('%c リアルタイム更新: 返信一覧', 'color: #4CAF50; font-weight: bold');
             
             const replies = [];
@@ -208,32 +199,31 @@ function setupRealtimeRepliesListener(messageId) {
 
             displayReplies(replies);
         }, (error) => {
-            console.error('返信リスナーエラー:', error);
-            container.innerHTML = '<p style="text-align:center; padding: 40px; color: #f44336;">エラーが発生しました。</p>';
+            console.error('返信リスナ�Eエラー:', error);
+            container.innerHTML = '<p style="text-align:center; padding: 40px; color: #f44336;">エラーが発生しました、E/p>';
         });
 
     } catch (error) {
-        console.error('返信リスナー設定エラー:', error);
-        container.innerHTML = '<p style="text-align:center; padding: 40px; color: #f44336;">エラーが発生しました。</p>';
+        console.error('返信リスナ�E設定エラー:', error);
+        container.innerHTML = '<p style="text-align:center; padding: 40px; color: #f44336;">エラーが発生しました、E/p>';
     }
 }
 
 // ===================================================================
-// イベントリスナー設定
-// ===================================================================
+// イベントリスナ�E設宁E// ===================================================================
 function setupEventListeners() {
-    // ロゴクリック
+    // ロゴクリチE��
     document.getElementById('logoBtn').addEventListener('click', () => {
         searchQuery = '';
         currentSort = 'new';
         document.getElementById('searchInput').value = '';
-        document.getElementById('sortLabel').textContent = '新規順';
+        document.getElementById('sortLabel').textContent = '新規頁E;
         hideThreadDetail();
         hideReplyDetail();
         setupRealtimeThreadsListener();
     });
 
-    // アカウントボタン
+    // アカウント�Eタン
     document.getElementById('accountBtn').addEventListener('click', showAccountModal);
     document.getElementById('modalOverlay').addEventListener('click', hideAccountModal);
 
@@ -251,25 +241,24 @@ function setupEventListeners() {
         showLoginForm();
     });
 
-    // ログアウト・アカウント削除
+    // ログアウト�Eアカウント削除
     document.getElementById('logoutBtn').addEventListener('click', handleLogout);
     document.getElementById('deleteAccountBtn').addEventListener('click', handleDeleteAccount);
 
-    // スレッド作成
+    // スレチE��作�E
     document.getElementById('createThreadBtn').addEventListener('click', showCreateThreadModal);
     document.getElementById('createThreadOverlay').addEventListener('click', hideCreateThreadModal);
     document.getElementById('cancelCreateBtn').addEventListener('click', hideCreateThreadModal);
     document.getElementById('createThreadForm').addEventListener('submit', handleCreateThread);
     document.getElementById('tagInput').addEventListener('keydown', handleTagInput);
 
-    // 検索・ソート
-    document.getElementById('searchInput').addEventListener('input', handleSearch);
+    // 検索・ソーチE    document.getElementById('searchInput').addEventListener('input', handleSearch);
     document.getElementById('sortBtn').addEventListener('click', toggleSortMenu);
     document.querySelectorAll('.sort-option').forEach(btn => {
         btn.addEventListener('click', (e) => handleSort(e.target.dataset.sort));
     });
 
-    // スレッド詳細
+    // スレチE��詳細
     document.getElementById('backBtn').addEventListener('click', () => {
         hideThreadDetail();
         setupRealtimeThreadsListener();
@@ -285,14 +274,13 @@ function setupEventListeners() {
 }
 
 // ===================================================================
-// 認証処理
-// ===================================================================
+// 認証処琁E// ===================================================================
 async function handleLogin(e) {
     e.preventDefault();
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
 
-    console.log('ログイン試行:', username);
+    console.log('ログイン試衁E', username);
 
     try {
         const email = username + '@forums.local';
@@ -303,11 +291,11 @@ async function handleLogin(e) {
         console.error('ログインエラー:', error.code);
         const errorBox = document.getElementById('loginError');
         if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-            showError(errorBox, 'パスワードが違います。');
+            showError(errorBox, 'パスワードが違います、E);
         } else if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-email') {
-            showError(errorBox, '名前が間違っているか、\nアカウントが存在しません。');
+            showError(errorBox, '名前が間違ってぁE��か、\nアカウントが存在しません、E);
         } else {
-            showError(errorBox, 'ログインエラーが発生しました。');
+            showError(errorBox, 'ログインエラーが発生しました、E);
         }
     }
 }
@@ -317,31 +305,30 @@ async function handleRegister(e) {
     const username = document.getElementById('registerUsername').value.trim();
     const password = document.getElementById('registerPassword').value;
 
-    console.log('アカウント作成試行:', username);
+    console.log('アカウント作�E試衁E', username);
 
     if (password.length < 6) {
-        showError(document.getElementById('registerError'), 'パスワードは6文字以上必要です。');
+        showError(document.getElementById('registerError'), 'パスワード�E6斁E��以上忁E��です、E);
         return;
     }
 
     try {
         const email = username + '@forums.local';
         
-        // ユーザー名の重複チェック
+        // ユーザー名�E重褁E��ェチE��
         const usersQuery = query(collection(db, 'users'), where('username', '==', username));
         const querySnapshot = await getDocs(usersQuery);
         
         if (!querySnapshot.empty) {
-            showError(document.getElementById('registerError'), 'この名前は既に使用されています。');
+            showError(document.getElementById('registerError'), 'こ�E名前は既に使用されてぁE��す、E);
             return;
         }
 
-        // アカウント作成
+        // アカウント作�E
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // Firestoreにユーザー情報を保存
-        const isAdmin = username === 'AtsukiGames';
+        // Firestoreにユーザー惁E��を保孁E        const isAdmin = username === 'AtsukiGames';
         await setDoc(doc(db, 'users', user.uid), {
             username: username,
             email: email,
@@ -350,22 +337,22 @@ async function handleRegister(e) {
         });
 
         await updateProfile(user, { displayName: username });
-        console.log('%c アカウント作成成功:', 'color: #4CAF50; font-weight: bold', username, isAdmin ? '(管理者)' : '');
+        console.log('%c アカウント作�E成功:', 'color: #4CAF50; font-weight: bold', username, isAdmin ? '(管琁E��E' : '');
         hideAccountModal();
     } catch (error) {
-        console.error('アカウント作成エラー:', error);
-        showError(document.getElementById('registerError'), 'アカウント作成エラーが発生しました。');
+        console.error('アカウント作�Eエラー:', error);
+        showError(document.getElementById('registerError'), 'アカウント作�Eエラーが発生しました、E);
     }
 }
 
 async function handleLogout() {
     try {
         await signOut(auth);
-        console.log('%c ログアウト成功', 'color: #4CAF50; font-weight: bold');
+        console.log('%c ログアウト�E劁E, 'color: #4CAF50; font-weight: bold');
         hideAccountModal();
     } catch (error) {
         console.error('ログアウトエラー:', error);
-        alert('ログアウトエラーが発生しました。');
+        alert('ログアウトエラーが発生しました、E);
     }
 }
 
@@ -377,7 +364,7 @@ async function handleDeleteAccount() {
         const email = currentUserData.username + '@forums.local';
         await signInWithEmailAndPassword(auth, email, password);
         
-        // Firestoreからユーザーデータを削除
+        // FirestoreからユーザーチE�Eタを削除
         await deleteDoc(doc(db, 'users', currentUser.uid));
         
         // Authenticationからユーザーを削除
@@ -385,25 +372,24 @@ async function handleDeleteAccount() {
         
         console.log('%c アカウント削除成功', 'color: #4CAF50; font-weight: bold');
         hideAccountModal();
-        alert('アカウントが削除されました。');
+        alert('アカウントが削除されました、E);
     } catch (error) {
         console.error('アカウント削除エラー:', error);
         if (error.code === 'auth/wrong-password') {
-            alert('パスワードが違います。');
+            alert('パスワードが違います、E);
         } else {
-            alert('アカウント削除エラーが発生しました。');
+            alert('アカウント削除エラーが発生しました、E);
         }
     }
 }
 
 // ===================================================================
-// スレッド管理
-// ===================================================================
+// スレチE��管琁E// ===================================================================
 async function displayThreads(threads) {
     const container = document.getElementById('threadsContainer');
     
     if (threads.length === 0) {
-        container.innerHTML = '<p style="text-align:center; padding: 40px; color: #999;">スレッドがありません。</p>';
+        container.innerHTML = '<p style="text-align:center; padding: 40px; color: #999;">スレチE��がありません、E/p>';
         return;
     }
 
@@ -420,17 +406,17 @@ async function displayThreads(threads) {
                 creatorName = creatorDoc.data().username;
             }
         } catch (error) {
-            console.error('作成者情報の取得エラー:', error);
+            console.error('作�E老E��報の取得エラー:', error);
         }
 
         const date = thread.createdAt?.toDate().toLocaleDateString('ja-JP');
         
         card.innerHTML = `
-            ${thread.isPinned ? '<div class="thread-pin-badge">📌固定されています</div>' : ''}
+            ${thread.isPinned ? '<div class="thread-pin-badge">📌固定されてぁE��ぁE/div>' : ''}
             <h3 class="thread-card-title">${escapeHtml(thread.title)}</h3>
             <div class="thread-card-meta">
-                <span>作成者: ${escapeHtml(creatorName)}</span>
-                <span>作成日: ${date}</span>
+                <span>作�E老E ${escapeHtml(creatorName)}</span>
+                <span>作�E日: ${date}</span>
                 <span>💬 ${thread.messageCount || 0}</span>
             </div>
             <div class="thread-card-tags">
@@ -438,7 +424,7 @@ async function displayThreads(threads) {
             </div>
         `;
 
-        // スレッドオーナーまたは管理者の場合、メニューボタンを追加
+        // スレチE��オーナ�Eまた�E管琁E��E�E場合、メニューボタンを追加
         if (currentUserData && (currentUserData.id === thread.creatorId || currentUserData.isAdmin)) {
             const menuBtn = document.createElement('button');
             menuBtn.className = 'thread-menu-trigger';
@@ -456,7 +442,7 @@ async function displayThreads(threads) {
 }
 
 function showThreadMenu(thread, buttonElement) {
-    // 既存のメニューを閉じる
+    // 既存�Eメニューを閉じる
     document.querySelectorAll('.thread-card-menu').forEach(menu => menu.remove());
 
     const menu = document.createElement('div');
@@ -475,11 +461,11 @@ function showThreadMenu(thread, buttonElement) {
     
     if (currentUserData.isAdmin) {
         options.push({
-            text: thread.isPinned ? '固定解除' : '固定',
+            text: thread.isPinned ? '固定解除' : '固宁E,
             action: () => togglePin(thread)
         });
         options.push({
-            text: thread.isLocked ? 'ロック解除' : 'ロック',
+            text: thread.isLocked ? 'ロチE��解除' : 'ロチE��',
             action: () => toggleLock(thread)
         });
     }
@@ -513,7 +499,7 @@ function showThreadMenu(thread, buttonElement) {
     buttonElement.parentElement.appendChild(menu);
     menu.classList.add('thread-card-menu');
 
-    // メニュー外をクリックしたら閉じる
+    // メニュー外をクリチE��したら閉じる
     setTimeout(() => {
         document.addEventListener('click', function closeMenu(e) {
             if (!menu.contains(e.target) && e.target !== buttonElement) {
@@ -529,18 +515,17 @@ async function togglePin(thread) {
         const batch = writeBatch(db);
         
         if (!thread.isPinned) {
-            // 新しく固定する場合、既存の固定を全て解除
+            // 新しく固定する場合、既存�E固定を全て解除
             const threadsQuery = query(collection(db, 'threads'), where('isPinned', '==', true));
             const pinnedThreads = await getDocs(threadsQuery);
             
             pinnedThreads.forEach((doc) => {
                 batch.update(doc.ref, { isPinned: false });
-                console.log('既存の固定を解除:', doc.id);
+                console.log('既存�E固定を解除:', doc.id);
             });
             
-            // 新しいスレッドを固定
-            batch.update(doc(db, 'threads', thread.id), { isPinned: true });
-            console.log('%c スレッドを固定:', 'color: #4CAF50; font-weight: bold', thread.title);
+            // 新しいスレチE��を固宁E            batch.update(doc(db, 'threads', thread.id), { isPinned: true });
+            console.log('%c スレチE��を固宁E', 'color: #4CAF50; font-weight: bold', thread.title);
         } else {
             // 固定解除
             batch.update(doc(db, 'threads', thread.id), { isPinned: false });
@@ -549,8 +534,8 @@ async function togglePin(thread) {
         
         await batch.commit();
     } catch (error) {
-        console.error('固定切り替えエラー:', error);
-        alert('操作に失敗しました。');
+        console.error('固定�Eり替えエラー:', error);
+        alert('操作に失敗しました、E);
     }
 }
 
@@ -559,20 +544,20 @@ async function toggleLock(thread) {
         await updateDoc(doc(db, 'threads', thread.id), {
             isLocked: !thread.isLocked
         });
-        console.log('ロック状態変更:', thread.title);
+        console.log('ロチE��状態変更:', thread.title);
     } catch (error) {
-        console.error('ロック切り替えエラー:', error);
-        alert('操作に失敗しました。');
+        console.error('ロチE��刁E��替えエラー:', error);
+        alert('操作に失敗しました、E);
     }
 }
 
 async function deleteThreadFromList(thread) {
-    if (!confirm('このスレッドを削除しますか？')) return;
+    if (!confirm('こ�EスレチE��を削除しますか�E�E)) return;
 
     try {
         await deleteDoc(doc(db, 'threads', thread.id));
         
-        // 関連メッセージと返信も削除
+        // 関連メチE��ージと返信も削除
         const messagesQuery = query(collection(db, 'messages'), where('threadId', '==', thread.id));
         const messagesSnapshot = await getDocs(messagesQuery);
         
@@ -587,10 +572,10 @@ async function deleteThreadFromList(thread) {
             await deleteDoc(messageDoc.ref);
         }
 
-        console.log('%c スレッド削除:', 'color: #f44336; font-weight: bold', thread.title);
+        console.log('%c スレチE��削除:', 'color: #f44336; font-weight: bold', thread.title);
     } catch (error) {
-        console.error('スレッド削除エラー:', error);
-        alert('削除に失敗しました。');
+        console.error('スレチE��削除エラー:', error);
+        alert('削除に失敗しました、E);
     }
 }
 
@@ -601,7 +586,7 @@ async function handleCreateThread(e) {
         .map(pill => pill.dataset.tag);
 
     if (!title || tags.length === 0) {
-        showError(document.getElementById('createThreadError'), '内容が不足しています。');
+        showError(document.getElementById('createThreadError'), '冁E��が不足してぁE��す、E);
         return;
     }
 
@@ -616,11 +601,11 @@ async function handleCreateThread(e) {
             isLocked: false
         });
 
-        console.log('%c スレッド作成:', 'color: #4CAF50; font-weight: bold', title);
+        console.log('%c スレチE��作�E:', 'color: #4CAF50; font-weight: bold', title);
         hideCreateThreadModal();
     } catch (error) {
-        console.error('スレッド作成エラー:', error);
-        showError(document.getElementById('createThreadError'), 'スレッド作成に失敗しました。');
+        console.error('スレチE��作�Eエラー:', error);
+        showError(document.getElementById('createThreadError'), 'スレチE��作�Eに失敗しました、E);
     }
 }
 
@@ -636,7 +621,7 @@ function handleTagInput(e) {
         const currentTags = container.children.length;
 
         if (currentTags >= 5) {
-            showError(document.getElementById('createThreadError'), 'タグは5つまで作成できます。');
+            showError(document.getElementById('createThreadError'), 'タグは5つまで作�Eできます、E);
             return;
         }
 
@@ -645,7 +630,7 @@ function handleTagInput(e) {
         pill.dataset.tag = tag;
         pill.innerHTML = `
             ${escapeHtml(tag)}
-            <button type="button" class="tag-remove">×</button>
+            <button type="button" class="tag-remove">ÁE/button>
         `;
         
         pill.querySelector('.tag-remove').onclick = () => {
@@ -659,7 +644,7 @@ function handleTagInput(e) {
 }
 
 // ===================================================================
-// スレッド詳細表示
+// スレチE��詳細表示
 // ===================================================================
 async function showThreadDetail(thread) {
     currentThread = thread;
@@ -668,7 +653,7 @@ async function showThreadDetail(thread) {
     document.getElementById('threadDetail').classList.remove('hidden');
     document.getElementById('threadDetailTitle').textContent = thread.title;
 
-    // ロック状態の表示
+    // ロチE��状態�E表示
     const messageInputContainer = document.getElementById('messageInputContainer');
     const lockedMessage = document.getElementById('lockedMessage');
     
@@ -693,8 +678,8 @@ async function showThreadDetail(thread) {
         const pinBtn = document.getElementById('pinThreadBtn');
         const lockBtn = document.getElementById('lockThreadBtn');
         
-        pinBtn.textContent = thread.isPinned ? '固定解除' : '固定';
-        lockBtn.textContent = thread.isLocked ? 'ロック解除' : 'ロック';
+        pinBtn.textContent = thread.isPinned ? '固定解除' : '固宁E;
+        lockBtn.textContent = thread.isLocked ? 'ロチE��解除' : 'ロチE��';
         
         if (currentUserData.isAdmin) {
             pinBtn.style.display = 'block';
@@ -728,7 +713,7 @@ async function showThreadDetail(thread) {
 }
 
 async function deleteThread(thread) {
-    if (!confirm('このスレッドを削除しますか？')) return;
+    if (!confirm('こ�EスレチE��を削除しますか�E�E)) return;
 
     try {
         await deleteDoc(doc(db, 'threads', thread.id));
@@ -747,11 +732,11 @@ async function deleteThread(thread) {
             await deleteDoc(messageDoc.ref);
         }
 
-        console.log('%c スレッド削除:', 'color: #f44336; font-weight: bold', thread.title);
+        console.log('%c スレチE��削除:', 'color: #f44336; font-weight: bold', thread.title);
         hideThreadDetail();
     } catch (error) {
-        console.error('スレッド削除エラー:', error);
-        alert('削除に失敗しました。');
+        console.error('スレチE��削除エラー:', error);
+        alert('削除に失敗しました、E);
     }
 }
 
@@ -759,7 +744,7 @@ async function displayMessages(messages) {
     const container = document.getElementById('messagesContainer');
     
     if (messages.length === 0) {
-        container.innerHTML = '<p style="text-align:center; padding: 40px; color: #999;">メッセージがありません。</p>';
+        container.innerHTML = '<p style="text-align:center; padding: 40px; color: #999;">メチE��ージがありません、E/p>';
         return;
     }
 
@@ -782,7 +767,7 @@ async function displayMessages(messages) {
                 isOwner = message.userId === currentThread.creatorId;
             }
         } catch (error) {
-            console.error('作成者情報の取得エラー:', error);
+            console.error('作�E老E��報の取得エラー:', error);
         }
 
         const date = message.createdAt?.toDate().toLocaleString('ja-JP');
@@ -826,7 +811,7 @@ async function handleSendMessage() {
     
     if (!content) return;
     if (!currentUser) {
-        alert('ログインが必要です。');
+        alert('ログインが忁E��です、E);
         return;
     }
 
@@ -844,11 +829,11 @@ async function handleSendMessage() {
             messageCount: increment(1)
         });
 
-        console.log('%c メッセージ送信成功', 'color: #4CAF50; font-weight: bold');
+        console.log('%c メチE��ージ送信成功', 'color: #4CAF50; font-weight: bold');
         document.getElementById('messageInput').value = '';
     } catch (error) {
-        console.error('メッセージ送信エラー:', error);
-        alert('メッセージの送信に失敗しました。');
+        console.error('メチE��ージ送信エラー:', error);
+        alert('メチE��ージの送信に失敗しました、E);
     }
 }
 
@@ -869,12 +854,12 @@ async function handleLike(message) {
             });
         }
     } catch (error) {
-        console.error('いいねエラー:', error);
+        console.error('ぁE��ねエラー:', error);
     }
 }
 
 // ===================================================================
-// 返信機能
+// 返信機�E
 // ===================================================================
 async function showReplyDetail(message) {
     currentMessage = message;
@@ -890,7 +875,7 @@ async function showReplyDetail(message) {
             authorName = authorDoc.data().username;
         }
     } catch (error) {
-        console.error('作成者情報の取得エラー:', error);
+        console.error('作�E老E��報の取得エラー:', error);
     }
 
     const originalMessageDiv = document.getElementById('originalMessage');
@@ -920,7 +905,7 @@ async function displayReplies(replies) {
     const container = document.getElementById('repliesContainer');
     
     if (replies.length === 0) {
-        container.innerHTML = '<p style="text-align:center; padding: 40px; color: #999;">返信がありません。</p>';
+        container.innerHTML = '<p style="text-align:center; padding: 40px; color: #999;">返信がありません、E/p>';
         return;
     }
 
@@ -937,7 +922,7 @@ async function displayReplies(replies) {
                 authorName = authorDoc.data().username;
             }
         } catch (error) {
-            console.error('作成者情報の取得エラー:', error);
+            console.error('作�E老E��報の取得エラー:', error);
         }
 
         const date = reply.createdAt?.toDate().toLocaleString('ja-JP');
@@ -959,7 +944,7 @@ async function handleSendReply() {
     
     if (!content) return;
     if (!currentUser) {
-        alert('ログインが必要です。');
+        alert('ログインが忁E��です、E);
         return;
     }
 
@@ -979,13 +964,12 @@ async function handleSendReply() {
         document.getElementById('replyInput').value = '';
     } catch (error) {
         console.error('返信送信エラー:', error);
-        alert('返信の送信に失敗しました。');
+        alert('返信の送信に失敗しました、E);
     }
 }
 
 // ===================================================================
-// 検索・ソート
-// ===================================================================
+// 検索・ソーチE// ===================================================================
 function handleSearch(e) {
     searchQuery = e.target.value;
     console.log('検索:', searchQuery);
@@ -998,10 +982,10 @@ function toggleSortMenu() {
 
 function handleSort(sort) {
     currentSort = sort;
-    const labels = { new: '新規順', popular: '人気順', old: '古い順' };
+    const labels = { new: '新規頁E, popular: '人気頁E, old: '古ぁE��E };
     document.getElementById('sortLabel').textContent = labels[sort];
     document.getElementById('sortMenu').classList.add('hidden');
-    console.log('ソート:', sort);
+    console.log('ソーチE', sort);
     setupRealtimeThreadsListener();
 }
 
@@ -1024,7 +1008,7 @@ function showAccountModal() {
         document.getElementById('registerForm').classList.add('hidden');
         document.getElementById('userMenu').classList.remove('hidden');
         document.getElementById('userName').textContent = currentUserData.username + 
-            (currentUserData.isAdmin ? ' (管理者)' : '');
+            (currentUserData.isAdmin ? ' (管琁E��E' : '');
     } else {
         document.getElementById('loginForm').classList.remove('hidden');
         document.getElementById('registerForm').classList.add('hidden');
@@ -1067,7 +1051,7 @@ function hideThreadDetail() {
     document.querySelector('.main-content').classList.remove('hidden');
     document.getElementById('threadMenu').classList.add('hidden');
     
-    // メッセージリスナーを解除
+    // メチE��ージリスナ�Eを解除
     if (messagesUnsubscribe) {
         messagesUnsubscribe();
         messagesUnsubscribe = null;
@@ -1077,7 +1061,7 @@ function hideThreadDetail() {
 function hideReplyDetail() {
     document.getElementById('replyDetail').classList.add('hidden');
     
-    // 返信リスナーを解除
+    // 返信リスナ�Eを解除
     if (repliesUnsubscribe) {
         repliesUnsubscribe();
         repliesUnsubscribe = null;
@@ -1090,19 +1074,37 @@ function showError(element, message) {
 }
 
 function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    let html = div.innerHTML;
-    html = html.replace(/  /g, ' &nbsp;');
-    html = html.replace(/ $/gm, ' &nbsp;');
-    html = html.replace(/(\r?\n)/g, '<br>');
-    return html;
+    if (!text) return "";
+    return text
+        .replace(/[&<>"']/g, function(match) {
+            return {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[match];
+        })
+        .replace(/(\r\n|\n|\r)/g, '<br>');
+}[match];
+        })
+        .replace(/(\r\n|\n|\r)/g, '<br>');
+}[match];
+        })
+        .replace(/(\r\n|\n|\r)/g, '<br>');
+}[match];
+        })
+        .replace(/(\r\n|\n|\r)/g, '<br>');
+}[match];
+        })
+        .replace(/(\r\n|\n|\r)/g, '<br>');
+}[match];
+        })
+        .replace(/(\r\n|\n|\r)/g, '<br>');
+}[match];
+        })
+        .replace(/(\r\n|\n|\r)/g, '<br>');
+}[match];
+        })
+        .replace(/(\r\n|\n|\r)/g, '<br>');
 }
 
 // ===================================================================
-// グローバルクリックイベント（メニューを閉じる）
-// ===================================================================
+// グローバルクリチE��イベント（メニューを閉じる�E�E// ===================================================================
 document.addEventListener('click', (e) => {
     if (!e.target.closest('.sort-dropdown')) {
         document.getElementById('sortMenu').classList.add('hidden');
@@ -1113,7 +1115,7 @@ document.addEventListener('click', (e) => {
 });
 
 // ===================================================================
-// ページ離脱時のクリーンアップ
+// ペ�Eジ離脱時�EクリーンアチE�E
 // ===================================================================
 window.addEventListener('beforeunload', () => {
     if (threadsUnsubscribe) threadsUnsubscribe();
@@ -1121,6 +1123,121 @@ window.addEventListener('beforeunload', () => {
     if (repliesUnsubscribe) repliesUnsubscribe();
 });
 
-console.log('%c Forums アプリケーション初期化完了', 'color: #4CAF50; font-weight: bold; font-size: 16px');
+console.log('%c Forums アプリケーション初期化完亁E, 'color: #4CAF50; font-weight: bold; font-size: 16px');
 
 
+
+function setupRealtimeRepliesListener(messageId) {
+    if (window.repliesUnsubscribe) window.repliesUnsubscribe();
+    const container = document.getElementById('repliesContainer');
+    const q = query(collection(db, 'replies'), where('messageId', '==', messageId), orderBy('createdAt', 'asc'));
+    window.repliesUnsubscribe = onSnapshot(q, (querySnapshot) => {
+        const replies = [];
+        querySnapshot.forEach(doc => replies.push({ id: doc.id, ...doc.data() }));
+        displayReplies(replies);
+    });
+}
+
+function setupRealtimeRepliesListener(messageId) {
+    if (window.repliesUnsubscribe) window.repliesUnsubscribe();
+    const container = document.getElementById('repliesContainer');
+    const q = query(collection(db, 'replies'), where('messageId', '==', messageId), orderBy('createdAt', 'asc'));
+    window.repliesUnsubscribe = onSnapshot(q, (querySnapshot) => {
+        const replies = [];
+        querySnapshot.forEach(doc => replies.push({ id: doc.id, ...doc.data() }));
+        displayReplies(replies);
+    });
+}
+
+function setupRealtimeRepliesListener(messageId) {
+    if (window.repliesUnsubscribe) window.repliesUnsubscribe();
+    const container = document.getElementById('repliesContainer');
+    const q = query(collection(db, 'replies'), where('messageId', '==', messageId), orderBy('createdAt', 'asc'));
+    window.repliesUnsubscribe = onSnapshot(q, (querySnapshot) => {
+        const replies = [];
+        querySnapshot.forEach(doc => replies.push({ id: doc.id, ...doc.data() }));
+        displayReplies(replies);
+    });
+}
+
+function setupRealtimeRepliesListener(messageId) {
+    if (window.repliesUnsubscribe) window.repliesUnsubscribe();
+    const container = document.getElementById('repliesContainer');
+    const q = query(collection(db, 'replies'), where('messageId', '==', messageId), orderBy('createdAt', 'asc'));
+    window.repliesUnsubscribe = onSnapshot(q, (querySnapshot) => {
+        const replies = [];
+        querySnapshot.forEach(doc => replies.push({ id: doc.id, ...doc.data() }));
+        displayReplies(replies);
+    });
+}
+
+function setupRealtimeRepliesListener(messageId) {
+    if (window.repliesUnsubscribe) window.repliesUnsubscribe();
+    const container = document.getElementById('repliesContainer');
+    const q = query(collection(db, 'replies'), where('messageId', '==', messageId), orderBy('createdAt', 'asc'));
+    window.repliesUnsubscribe = onSnapshot(q, (querySnapshot) => {
+        const replies = [];
+        querySnapshot.forEach(doc => replies.push({ id: doc.id, ...doc.data() }));
+        displayReplies(replies);
+    });
+}
+
+function setupRealtimeRepliesListener(messageId) {
+    if (window.repliesUnsubscribe) window.repliesUnsubscribe();
+    const container = document.getElementById('repliesContainer');
+    const q = query(collection(db, 'replies'), where('messageId', '==', messageId), orderBy('createdAt', 'asc'));
+    window.repliesUnsubscribe = onSnapshot(q, (querySnapshot) => {
+        const replies = [];
+        querySnapshot.forEach(doc => replies.push({ id: doc.id, ...doc.data() }));
+        displayReplies(replies);
+    });
+}
+document.addEventListener('DOMContentLoaded', function() {
+    const check = document.getElementById('protectThreadCheck');
+    const group = document.getElementById('protectPasswordGroup');
+    if (check && group) {
+        check.addEventListener('change', function() {
+            group.classList.toggle('hidden', !check.checked);
+        });
+    }
+}, false);
+
+function setupRealtimeRepliesListener(messageId) {
+    if (window.repliesUnsubscribe) window.repliesUnsubscribe();
+    const container = document.getElementById('repliesContainer');
+    const q = query(collection(db, 'replies'), where('messageId', '==', messageId), orderBy('createdAt', 'asc'));
+    window.repliesUnsubscribe = onSnapshot(q, (querySnapshot) => {
+        const replies = [];
+        querySnapshot.forEach(doc => replies.push({ id: doc.id, ...doc.data() }));
+        displayReplies(replies);
+    });
+}
+document.addEventListener('DOMContentLoaded', function() {
+    const check = document.getElementById('protectThreadCheck');
+    const group = document.getElementById('protectPasswordGroup');
+    if (check && group) {
+        check.addEventListener('change', function() {
+            group.classList.toggle('hidden', !check.checked);
+        });
+    }
+}, false);
+
+function setupRealtimeRepliesListener(messageId) {
+    if (window.repliesUnsubscribe) window.repliesUnsubscribe();
+    const container = document.getElementById('repliesContainer');
+    const q = query(collection(db, 'replies'), where('messageId', '==', messageId), orderBy('createdAt', 'asc'));
+    window.repliesUnsubscribe = onSnapshot(q, (querySnapshot) => {
+        const replies = [];
+        querySnapshot.forEach(doc => replies.push({ id: doc.id, ...doc.data() }));
+        displayReplies(replies);
+    });
+}
+document.addEventListener('DOMContentLoaded', function() {
+    const check = document.getElementById('protectThreadCheck');
+    const group = document.getElementById('protectPasswordGroup');
+    if (check && group) {
+        check.addEventListener('change', function() {
+            group.classList.toggle('hidden', !check.checked);
+        });
+    }
+}, false);
