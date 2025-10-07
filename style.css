@@ -1,5 +1,5 @@
 /* =================================================================== */
-/* Forums アプリケーション - 完全版スタイル（修正済み） */
+/* Forums アプリケーション - 修正版スタイル（管理者・スレッド主対応） */
 /* =================================================================== */
 
 /* ベーススタイル */
@@ -382,6 +382,39 @@ body {
     margin-top: 7px;
 }
 
+/* スレッドカードに管理者メニューボタン追加 */
+.thread-card-menu-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: #666;
+}
+
+.thread-card-menu-btn:hover {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.thread-card-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 10;
+    min-width: 120px;
+    margin-top: 4px;
+}
+
 /* スレッド詳細 */
 .thread-detail {
     max-width: 820px;
@@ -529,6 +562,30 @@ body {
 }
 
 .like-btn.liked {
+    color: #388E3C;
+}
+
+/* スレッドいいねボタン修正 */
+.thread-like-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.thread-like-btn:hover {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.thread-like-btn.liked {
     color: #388E3C;
 }
 
@@ -742,6 +799,14 @@ body {
 .plus-icon {
     font-size: 18px;
     line-height: 1;
+}
+
+/* パスワード表示用スタイル */
+.password-info {
+    color: #ba4a00;
+    font-size: 12px;
+    font-weight: 500;
+    margin-left: 8px;
 }
 
 /* レスポンシブ */

@@ -118,17 +118,13 @@
                 </p>
             </div>
 
-            <!-- 新規登録フォーム -->
+            <!-- 新規登録フォーム（メールアドレス削除） -->
             <div class="auth-form hidden" id="registerForm">
                 <h2>新規登録</h2>
                 <form id="registerFormElement">
                     <div class="form-group">
                         <label>ユーザー名</label>
                         <input type="text" id="registerUsername" required>
-                    </div>
-                    <div class="form-group">
-                        <label>メールアドレス</label>
-                        <input type="email" id="registerEmail" required>
                     </div>
                     <div class="form-group">
                         <label>パスワード</label>
@@ -142,12 +138,11 @@
                 </p>
             </div>
 
-            <!-- ログイン済み画面 -->
+            <!-- ログイン済み画面（メールアドレス削除） -->
             <div class="user-info hidden" id="userInfo">
                 <h2>アカウント情報</h2>
                 <div class="user-details">
                     <p><strong>ユーザー名:</strong> <span id="userDisplayName"></span></p>
-                    <p><strong>メールアドレス:</strong> <span id="userEmail"></span></p>
                 </div>
                 <div class="user-actions">
                     <button class="btn btn-secondary" id="logoutBtn">ログアウト</button>

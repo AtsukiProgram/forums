@@ -1,5 +1,5 @@
 // ===================================================================
-// Forums アプリケーション - 完全版メインロジック（全機能実装・修正済み）
+// Forums アプリケーション - 修正版メインロジック（全要求事項対応）
 // ===================================================================
 
 import { auth, db } from './firebase-config.js';
@@ -315,7 +315,7 @@ function setupRealtimeThreadsListener() {
 }
 
 // ===================================================================
-// スレッド表示
+// スレッド表示（管理者・スレッド主権限対応）
 // ===================================================================
 async function displayThreads(threads) {
     const container = document.getElementById('threadsContainer');
@@ -343,11 +343,34 @@ async function displayThreads(threads) {
 
         const date = thread.createdAt?.toDate().toLocaleDateString('ja-JP');
 
+        // 管理者・スレッド主の場合はパスワード表示
+        const isAdminOrCreator = currentUserData?.isAdmin || currentUser?.uid === thread.creatorId;
+        const passwordDisplay = (thread.hasPassword && isAdminOrCreator) ? ` | パスワード: ${thread.password || '設定済み'}` : '';
+
+        // 管理者メニューボタン表示判定
+        const showMenu = isAdminOrCreator;
+
+        // スレッドいいね機能（修正）
+        const isThreadLiked = thread.likedBy?.includes(currentUser?.uid);
+        const threadLikeBtn = currentUser ? `
+            <button class="thread-like-btn ${isThreadLiked ? 'liked' : ''}" onclick="toggleThreadLike('${thread.id}', event)">
+                👍 ${thread.likeCount || 0}
+            </button>
+        ` : `<span>👍 ${thread.likeCount || 0}</span>`;
+
         card.innerHTML = `
+            ${showMenu ? `
+                <button class="thread-card-menu-btn" onclick="showThreadCardMenu('${thread.id}', event)">⋮</button>
+                <div class="thread-card-menu hidden" id="threadCardMenu-${thread.id}">
+                    <button class="menu-option" onclick="togglePin('${thread.id}')">${thread.isPinned ? '📌 ピン留め解除' : '📌 ピン留め'}</button>
+                    <button class="menu-option" onclick="toggleLock('${thread.id}')">${thread.isLocked ? '🔓 ロック解除' : '🔒 ロック'}</button>
+                    <button class="menu-option delete" onclick="deleteThreadFromCard('${thread.id}')">🗑️ 削除</button>
+                </div>
+            ` : ''}
             <div class="thread-header">
                 <h3 class="thread-title">${escapeHtml(thread.title)}</h3>
                 <div class="thread-meta">
-                    作成者: ${escapeHtml(creatorName)} | ${date}
+                    作成者: ${escapeHtml(creatorName)} | ${date}${passwordDisplay}
                 </div>
             </div>
             <div class="thread-content">${escapeHtml(thread.content)}</div>
@@ -363,13 +386,19 @@ async function displayThreads(threads) {
             </div>
             <div class="thread-stats">
                 <span>💬 ${thread.messageCount || 0}</span>
-                <span>👍 ${thread.likeCount || 0}</span>
+                ${threadLikeBtn}
                 <span>📊 ${thread.popularityScore || 0}</span>
             </div>
         `;
 
-        card.addEventListener('click', () => {
-            if (thread.hasPassword && !thread.passwordVerified) {
+        card.addEventListener('click', (e) => {
+            // メニューボタンクリック時はスレッド詳細を開かない
+            if (e.target.closest('.thread-card-menu-btn') || e.target.closest('.thread-card-menu') || e.target.closest('.thread-like-btn')) {
+                return;
+            }
+
+            // 管理者・スレッド主はパスワード入力不要
+            if (thread.hasPassword && !isAdminOrCreator && !thread.passwordVerified) {
                 showPasswordModal(thread);
             } else {
                 showThreadDetail(thread);
@@ -381,7 +410,129 @@ async function displayThreads(threads) {
 }
 
 // ===================================================================
-// 認証処理（ユーザー名対応修正版）
+// スレッドいいね機能（修正版）
+// ===================================================================
+async function toggleThreadLike(threadId, event) {
+    event.stopPropagation(); // カードクリックイベントを防止
+
+    if (!currentUser) {
+        alert('ログインが必要です。');
+        return;
+    }
+
+    try {
+        const threadRef = doc(db, 'threads', threadId);
+        const threadSnap = await getDoc(threadRef);
+
+        if (!threadSnap.exists()) return;
+
+        const threadData = threadSnap.data();
+        const likedBy = threadData.likedBy || [];
+        const isLiked = likedBy.includes(currentUser.uid);
+
+        if (isLiked) {
+            await updateDoc(threadRef, {
+                likedBy: likedBy.filter(uid => uid !== currentUser.uid),
+                likeCount: increment(-1)
+            });
+        } else {
+            await updateDoc(threadRef, {
+                likedBy: [...likedBy, currentUser.uid],
+                likeCount: increment(1)
+            });
+        }
+    } catch (error) {
+        console.error('スレッドいいね処理エラー:', error);
+    }
+}
+
+// ===================================================================
+// スレッドカードメニュー機能
+// ===================================================================
+function showThreadCardMenu(threadId, event) {
+    event.stopPropagation();
+
+    // 全てのメニューを閉じる
+    document.querySelectorAll('.thread-card-menu').forEach(menu => {
+        menu.classList.add('hidden');
+    });
+
+    // 該当メニューを表示
+    const menu = document.getElementById(`threadCardMenu-${threadId}`);
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
+
+async function togglePin(threadId) {
+    if (!currentUserData?.isAdmin) return;
+
+    try {
+        const threadRef = doc(db, 'threads', threadId);
+        const threadSnap = await getDoc(threadRef);
+
+        if (threadSnap.exists()) {
+            const threadData = threadSnap.data();
+            await updateDoc(threadRef, {
+                isPinned: !threadData.isPinned
+            });
+        }
+    } catch (error) {
+        console.error('ピン留めエラー:', error);
+    }
+}
+
+async function toggleLock(threadId) {
+    if (!currentUserData?.isAdmin) return;
+
+    try {
+        const threadRef = doc(db, 'threads', threadId);
+        const threadSnap = await getDoc(threadRef);
+
+        if (threadSnap.exists()) {
+            const threadData = threadSnap.data();
+            await updateDoc(threadRef, {
+                isLocked: !threadData.isLocked
+            });
+        }
+    } catch (error) {
+        console.error('ロックエラー:', error);
+    }
+}
+
+async function deleteThreadFromCard(threadId) {
+    if (!confirm('このスレッドを削除しますか？この操作は元に戻せません。')) return;
+
+    try {
+        // 関連するメッセージと返信も削除
+        const messagesQuery = query(collection(db, 'messages'), where('threadId', '==', threadId));
+        const messagesSnapshot = await getDocs(messagesQuery);
+
+        const deletePromises = [];
+
+        messagesSnapshot.forEach(async (messageDoc) => {
+            // 返信も削除
+            const repliesQuery = query(collection(db, 'replies'), where('messageId', '==', messageDoc.id));
+            const repliesSnapshot = await getDocs(repliesQuery);
+
+            repliesSnapshot.forEach((replyDoc) => {
+                deletePromises.push(deleteDoc(replyDoc.ref));
+            });
+
+            deletePromises.push(deleteDoc(messageDoc.ref));
+        });
+
+        deletePromises.push(deleteDoc(doc(db, 'threads', threadId)));
+
+        await Promise.all(deletePromises);
+    } catch (error) {
+        console.error('スレッド削除エラー:', error);
+        alert('スレッドの削除に失敗しました。');
+    }
+}
+
+// ===================================================================
+// 認証処理（メールアドレス削除対応）
 // ===================================================================
 function showAccountModal() {
     if (currentUser) {
@@ -425,7 +576,6 @@ function showUserInfo() {
     document.getElementById('registerForm').classList.add('hidden');
 
     document.getElementById('userDisplayName').textContent = currentUserData?.username || 'Unknown';
-    document.getElementById('userEmail').textContent = currentUser?.email || '';
 }
 
 // ログイン処理（ユーザー名対応）
@@ -455,11 +605,10 @@ async function handleLogin(e) {
     }
 }
 
-// 新規登録処理
+// 新規登録処理（メールアドレス自動生成）
 async function handleRegister(e) {
     e.preventDefault();
     const username = document.getElementById('registerUsername').value;
-    const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
 
     try {
@@ -472,6 +621,9 @@ async function handleRegister(e) {
             showError(document.getElementById('registerError'), 'このユーザー名は既に使用されています。');
             return;
         }
+
+        // メールアドレスを自動生成
+        const email = `${username}@forums.local`;
 
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(userCredential.user, { displayName: username });
@@ -514,7 +666,7 @@ async function handleDeleteAccount() {
 }
 
 // ===================================================================
-// スレッド詳細表示
+// スレッド詳細表示（管理者メニュー表示対応）
 // ===================================================================
 function showThreadDetail(thread) {
     currentThread = thread;
@@ -603,6 +755,7 @@ async function handleCreateThread(e) {
             createdAt: Timestamp.now(),
             messageCount: 0,
             likeCount: 0,
+            likedBy: [],
             isPinned: false,
             isLocked: false,
             hasPassword: isProtected
@@ -655,7 +808,7 @@ function handleTagInput(e) {
 }
 
 // ===================================================================
-// メッセージ管理
+// メッセージ管理（以下、既存のコードと同じ）
 // ===================================================================
 function setupRealtimeMessagesListener(threadId) {
     if (messagesUnsubscribe) {
@@ -1043,7 +1196,10 @@ function escapeHtml(text) {
 
 function createThreadMetaHTML(thread) {
     const date = thread.createdAt?.toDate().toLocaleDateString('ja-JP');
-    return `作成日: ${date} | メッセージ: ${thread.messageCount || 0} | いいね: ${thread.likeCount || 0} | スコア: ${thread.popularityScore || 0}`;
+    const isAdminOrCreator = currentUserData?.isAdmin || currentUser?.uid === thread.creatorId;
+    const passwordDisplay = (thread.hasPassword && isAdminOrCreator) ? ` | パスワード: ${thread.password || '設定済み'}` : '';
+
+    return `作成日: ${date} | メッセージ: ${thread.messageCount || 0} | いいね: ${thread.likeCount || 0} | スコア: ${thread.popularityScore || 0}${passwordDisplay}`;
 }
 
 function showError(element, message) {
@@ -1073,3 +1229,8 @@ function getErrorMessage(errorCode) {
 window.toggleLike = toggleLike;
 window.showReplyDetail = showReplyDetail;
 window.deleteMessage = deleteMessage;
+window.toggleThreadLike = toggleThreadLike;
+window.showThreadCardMenu = showThreadCardMenu;
+window.togglePin = togglePin;
+window.toggleLock = toggleLock;
+window.deleteThreadFromCard = deleteThreadFromCard;
