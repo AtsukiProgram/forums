@@ -27,6 +27,7 @@ body {
   position: absolute; right: 0; top: 18px;
   border-radius: 7px; border: 1px solid #e0e0e0; background: #fff;
   padding: 11px 38px; font-size: 18px; font-family: inherit; cursor: pointer; transition: background 0.13s;
+  z-index: 101;
 }
 .btn-account:hover { background: #e8f5e9; color: #266; }
 
@@ -46,10 +47,12 @@ body {
 }
 .arrow { font-size: 15px; margin-left: 2px; color: #555; }
 .sort-menu {
+  display: none;
   position:absolute; top: 44px; left: 0;
-  background: #fff; border: 1px solid #ddd; z-index: 40;
+  background: #fff; border: 1px solid #ddd; z-index: 100;
   min-width: 120px; box-shadow: 0 2px 12px #eee;
 }
+.sort-menu.active { display: block; }
 .sort-option {
   display:block; width:100%; padding: 11px 18px;
   font-size: 15px; text-align: left;
