@@ -1,71 +1,221 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>forums - フォーラム</title>
-  <link rel="icon" type="image/png" href="assets/forums.png">
-  <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="assets/forums.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>forums - フォーラム</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="header">
-  <div class="header-content">
-    <button class="logo-btn" id="logoBtn"><img src="assets/forums.png" class="logo-img" alt="forums"></button>
-    <div class="title-group">
-      <span class="title-main">forums</span>
-      <span class="title-jp">フォーラム</span>
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="header-content">
+            <button class="logo-btn" id="logoBtn" tabindex="0">
+                <img src="assets/forums.png" alt="forums" class="logo-img">
+            </button>
+            <div>
+                <h1 class="title">
+                    <span class="title-main">forums</span><br>
+                    <span class="title-jp">フォーラム</span>
+                </h1>
+            </div>
+            <button class="btn btn-account" id="accountBtn" tabindex="0">アカウント</button>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        <!-- ツールバー -->
+        <div class="toolbar" id="toolbar">
+            <input type="text" class="search-input" id="searchInput" placeholder="検索...">
+            <div class="sort-dropdown">
+                <button class="sort-btn" id="sortBtn">
+                    <span id="sortLabel">新規順</span>
+                    <span class="arrow">▽</span>
+                </button>
+                <div class="sort-menu hidden" id="sortMenu">
+                    <button class="sort-option" data-sort="new">新規順</button>
+                    <button class="sort-option" data-sort="popular">人気順</button>
+                    <button class="sort-option" data-sort="old">古い順</button>
+                </div>
+            </div>
+            <button class="btn btn-create hidden" id="createThreadBtn">
+                <span class="plus-icon">+</span> スレッド作成
+            </button>
+        </div>
+
+        <!-- スレッド一覧 -->
+        <div class="threads-container" id="threadsContainer">
+            <p class="no-threads">スレッドがありません。</p>
+        </div>
+
+        <!-- スレッド詳細ビュー -->
+        <div class="thread-detail hidden" id="threadDetail">
+            <div class="thread-header">
+                <button class="btn btn-back" id="backBtn">← 戻る</button>
+                <div class="thread-info">
+                    <h2 class="thread-title" id="threadTitle">スレッドタイトル</h2>
+                    <div class="thread-meta" id="threadMeta"></div>
+                </div>
+                <button class="thread-menu-btn hidden" id="threadMenuBtn">⋮</button>
+                <div class="thread-menu hidden" id="threadMenu">
+                    <button class="menu-option" id="pinThreadBtn">📌 ピン留め</button>
+                    <button class="menu-option" id="lockThreadBtn">🔒 ロック</button>
+                    <button class="menu-option delete" id="deleteThreadBtn">🗑️ 削除</button>
+                </div>
+            </div>
+            
+            <div class="messages-container" id="messagesContainer"></div>
+            
+            <div class="message-input-container hidden" id="messageInputContainer">
+                <div class="message-input-row">
+                    <textarea class="message-input" id="messageInput" placeholder="メッセージを入力..."></textarea>
+                    <button class="btn btn-send" id="sendMessageBtn">送信</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 返信詳細ビュー -->
+        <div class="reply-detail hidden" id="replyDetail">
+            <div class="reply-header">
+                <button class="btn btn-back" id="replyBackBtn">← 戻る</button>
+                <h3>返信</h3>
+            </div>
+            
+            <div class="original-message" id="originalMessage"></div>
+            <div class="replies-container" id="repliesContainer"></div>
+            
+            <div class="reply-input-container hidden" id="replyInputContainer">
+                <div class="message-input-row">
+                    <textarea class="reply-input" id="replyInput" placeholder="返信を入力..."></textarea>
+                    <button class="btn btn-send" id="sendReplyBtn">返信</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- アカウントモーダル -->
+    <div class="modal-overlay hidden" id="modalOverlay">
+        <div class="modal">
+            <!-- ログインフォーム -->
+            <div class="auth-form" id="loginForm">
+                <h2>ログイン</h2>
+                <form id="loginFormElement">
+                    <div class="form-group">
+                        <label>メールアドレス</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>パスワード</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">ログイン</button>
+                </form>
+                <div class="auth-error hidden" id="loginError"></div>
+                <p class="auth-switch">
+                    アカウントをお持ちでない方は <a href="#" id="showRegisterLink">新規登録</a>
+                </p>
+            </div>
+
+            <!-- 新規登録フォーム -->
+            <div class="auth-form hidden" id="registerForm">
+                <h2>新規登録</h2>
+                <form id="registerFormElement">
+                    <div class="form-group">
+                        <label>ユーザー名</label>
+                        <input type="text" id="registerUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label>メールアドレス</label>
+                        <input type="email" id="registerEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>パスワード</label>
+                        <input type="password" id="registerPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">登録</button>
+                </form>
+                <div class="auth-error hidden" id="registerError"></div>
+                <p class="auth-switch">
+                    既にアカウントをお持ちの方は <a href="#" id="showLoginLink">ログイン</a>
+                </p>
+            </div>
+
+            <!-- ログイン済み画面 -->
+            <div class="user-info hidden" id="userInfo">
+                <h2>アカウント情報</h2>
+                <div class="user-details">
+                    <p><strong>ユーザー名:</strong> <span id="userDisplayName"></span></p>
+                    <p><strong>メールアドレス:</strong> <span id="userEmail"></span></p>
+                </div>
+                <div class="user-actions">
+                    <button class="btn btn-secondary" id="logoutBtn">ログアウト</button>
+                    <button class="btn btn-danger" id="deleteAccountBtn">アカウント削除</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <button class="btn btn-account" id="accountBtn">アカウント</button>
-  </div>
-</header>
-<main class="main-content">
-  <div class="toolbar" id="toolbar">
-    <input type="text" class="search-input" id="searchInput" placeholder="タグで検索...">
-    <div class="sort-dropdown">
-      <button class="sort-btn" id="sortBtn" type="button">
-        <span id="sortLabel">新規順</span>
-        <span class="arrow">▽</span>
-      </button>
-      <div class="sort-menu" id="sortMenu" style="display:none;">
-        <button class="sort-option" type="button" data-sort="new">新規順</button>
-        <button class="sort-option" type="button" data-sort="popular">人気順</button>
-        <button class="sort-option" type="button" data-sort="old">古い順</button>
-      </div>
+
+    <!-- スレッド作成モーダル -->
+    <div class="modal-overlay hidden" id="createThreadOverlay">
+        <div class="modal">
+            <div class="create-form">
+                <h2>新しいスレッドを作成</h2>
+                <form id="createThreadForm">
+                    <div class="form-group">
+                        <label>タイトル</label>
+                        <input type="text" id="threadTitleInput" required maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label>内容</label>
+                        <textarea id="threadContentInput" required maxlength="2000" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>タグ</label>
+                        <input type="text" id="tagInput" placeholder="タグを入力してEnterキーを押す">
+                        <div class="tags-container" id="tagsContainer"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="protectThreadCheck"> パスワード保護
+                        </label>
+                    </div>
+                    <div class="form-group hidden" id="protectPasswordGroup">
+                        <label>パスワード</label>
+                        <input type="password" id="protectPasswordInput">
+                        <div class="thread-password">※ このスレッドにアクセスするのにパスワードが必要になります</div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelCreateBtn">キャンセル</button>
+                        <button type="submit" class="btn btn-primary">作成</button>
+                    </div>
+                </form>
+                <div class="auth-error hidden" id="createThreadError"></div>
+            </div>
+        </div>
     </div>
-    <button class="btn btn-create" id="createThreadBtn"><span class="plus-icon">+</span></button>
-  </div>
-  <div class="threads-container" id="threadsContainer">
-    <p style="text-align:center; padding: 40px; color: #999;">スレッドがありません。</p>
-  </div>
-</main>
-<script type="module" src="firebase-config.js"></script>
-<script type="module" src="app.js"></script>
-<script>
-  document.getElementById('logoBtn').onclick = function(){ location.reload(); };
-  document.getElementById('accountBtn').onclick = function(){
-    if(window.showAccountModal){ showAccountModal(); }
-    else{ alert('showAccountModal未定義'); }
-  };
-  document.getElementById('createThreadBtn').onclick = function(){
-    if(window.showCreateThreadModal){ showCreateThreadModal(); }
-    else{ alert('showCreateThreadModal未定義'); }
-  };
-  const sortBtn = document.getElementById('sortBtn');
-  const sortMenu = document.getElementById('sortMenu');
-  sortBtn.onclick = function(e){
-    e.stopPropagation();
-    sortMenu.style.display = sortMenu.style.display === "block" ? "none" : "block";
-  };
-  window.addEventListener('click', function(e){
-    if(!e.target.closest('.sort-dropdown')){ sortMenu.style.display = "none"; }
-  });
-  document.querySelectorAll('.sort-option').forEach(function(opt){
-    opt.onclick = function(){
-      document.getElementById('sortLabel').textContent = this.textContent;
-      sortMenu.style.display = "none";
-      if(window.handleSort) handleSort(this.dataset.sort);
-    };
-  });
-</script>
+
+    <!-- パスワード入力モーダル -->
+    <div class="modal-overlay hidden" id="passwordOverlay">
+        <div class="modal">
+            <div class="password-form">
+                <h2>パスワード入力</h2>
+                <p>このスレッドはパスワード保護されています。</p>
+                <form id="passwordForm">
+                    <div class="form-group">
+                        <input type="password" id="passwordInput" placeholder="パスワードを入力">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelPasswordBtn">キャンセル</button>
+                        <button type="submit" class="btn btn-primary">確認</button>
+                    </div>
+                </form>
+                <div class="auth-error hidden" id="passwordError"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
 </body>
 </html>
