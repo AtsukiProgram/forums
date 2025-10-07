@@ -1,54 +1,50 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>forums - フォーラム</title>
-    <link rel="icon" type="image/png" href="/assets/forums.png">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>forums - フォーラム</title>
+  <link rel="icon" type="image/png" href="assets/forums.png">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="header">
-    <div class="header-content">
-        <button class="logo-btn" id="logoBtn" tabindex="0">
-            <img src="assets/forums.png" alt="forums" class="logo-img">
-        </button>
-        <div>
-            <h1 class="title">
-                <span class="title-main">forums</span>
-                <br>
-                <span class="title-jp">フォーラム</span>
-            </h1>
-        </div>
-        <button class="btn btn-account" id="accountBtn" tabindex="0">アカウント</button>
+  <div class="header-content">
+    <button class="logo-btn" id="logoBtn"><img src="assets/forums.png" class="logo-img" alt="forums"></button>
+    <div class="title-group">
+      <span class="title-main">forums</span>
+      <span class="title-jp">フォーラム</span>
     </div>
+    <button class="btn btn-account" id="accountBtn">アカウント</button>
+  </div>
 </header>
 <main class="main-content">
-    <div class="toolbar" id="toolbar">
-        <input type="text" class="search-input" id="searchInput" placeholder="タグで検索...">
-        <div class="sort-dropdown">
-            <button class="sort-btn" id="sortBtn">
-                <span id="sortLabel">新規順</span>
-                <span class="arrow">▽</span>
-            </button>
-            <div class="sort-menu hidden" id="sortMenu">
-                <button class="sort-option" data-sort="new">新規順</button>
-                <button class="sort-option" data-sort="popular">人気順</button>
-                <button class="sort-option" data-sort="old">古い順</button>
-            </div>
-        </div>
-        <button class="btn btn-create hidden" id="createThreadBtn">
-            <span class="plus-icon">+</span>
-        </button>
+  <div class="toolbar" id="toolbar">
+    <input type="text" class="search-input" id="searchInput" placeholder="タグで検索...">
+    <div class="sort-dropdown">
+      <button class="sort-btn" id="sortBtn">
+        <span id="sortLabel">新規順</span>
+        <span class="arrow">▽</span>
+      </button>
+      <div class="sort-menu hidden" id="sortMenu">
+        <button class="sort-option" data-sort="new">新規順</button>
+        <button class="sort-option" data-sort="popular">人気順</button>
+        <button class="sort-option" data-sort="old">古い順</button>
+      </div>
     </div>
-    <div class="threads-container" id="threadsContainer">
-        <p style="text-align:center; padding: 40px; color: #999;">
-            スレッドがありません。
-        </p>
-    </div>
+    <button class="btn btn-create hidden" id="createThreadBtn"><span class="plus-icon">+</span></button>
+  </div>
+  <div class="threads-container" id="threadsContainer">
+    <p style="text-align:center; padding: 40px; color: #999;">スレッドがありません。</p>
+  </div>
 </main>
-<!-- ここから下はモーダル/詳細部（前回投稿どおり必要に応じ追加） -->
 <script type="module" src="firebase-config.js"></script>
 <script type="module" src="app.js"></script>
+<script>
+  // 重要：ロゴ・アカウントのクリック
+  document.getElementById('logoBtn').onclick = () => { location.href = '/'; };
+  // showAccountModal()はapp.jsで定義されている前提
+  document.getElementById('accountBtn').onclick = () => { if(window.showAccountModal) showAccountModal(); };
+</script>
 </body>
 </html>
