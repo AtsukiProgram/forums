@@ -1,5 +1,5 @@
 /* =================================================================== */
-/* Forums アプリケーション - 完全スタイル */
+/* Forums アプリケーション - 完全版スタイル（修正済み） */
 /* =================================================================== */
 
 /* ベーススタイル */
@@ -11,7 +11,7 @@ body {
     line-height: 1.6;
 }
 
-/* ヘッダー */
+/* ヘッダー - レイアウト修正 */
 .header {
     background: #fff;
     border-bottom: 1px solid #e0e0e0;
@@ -21,23 +21,22 @@ body {
 .header-content {
     display: flex;
     align-items: center;
-    gap: 18px;
-    max-width: 980px;
+    max-width: 1200px;
     margin: 0 auto;
     height: 75px;
     position: relative;
     padding: 0 20px;
+    gap: 20px;
 }
 
 .logo-btn {
     background: none;
     border: none;
     padding: 0;
-    margin-top: 1px;
     cursor: pointer;
     height: 50px;
     width: 50px;
-    flex: 0 0 52px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     border-radius: 8px;
@@ -56,11 +55,15 @@ body {
     object-fit: cover;
 }
 
+.title-section {
+    flex: 1;
+    min-width: 0;
+}
+
 .title {
-    margin: 0 16px 0 4px;
+    margin: 0;
     font-size: 2.1em;
     line-height: 1.2;
-    flex: 1;
     font-weight: bold;
     color: #388E3C;
 }
@@ -85,11 +88,8 @@ body {
     font-size: 18px;
     font-family: inherit;
     cursor: pointer;
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
     transition: all 0.2s;
+    flex-shrink: 0;
 }
 
 .btn-account:hover {
@@ -137,6 +137,7 @@ body {
     align-items: center;
     gap: 8px;
     transition: all 0.2s;
+    user-select: none;
 }
 
 .sort-btn:hover {
@@ -145,6 +146,7 @@ body {
 
 .arrow {
     transition: transform 0.2s;
+    pointer-events: none;
 }
 
 .sort-btn.active .arrow {
@@ -387,7 +389,7 @@ body {
     padding: 0 20px;
 }
 
-.thread-header {
+.thread-detail .thread-header {
     background: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
@@ -404,7 +406,7 @@ body {
     margin: 0 20px;
 }
 
-.thread-title {
+.thread-detail .thread-title {
     font-size: 22px;
     font-weight: bold;
     color: #333;
@@ -590,7 +592,7 @@ body {
     margin-bottom: 20px;
 }
 
-/* モーダル */
+/* モーダル - クリック問題修正 */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -612,6 +614,7 @@ body {
     width: 90%;
     max-height: 90vh;
     overflow-y: auto;
+    position: relative;
 }
 
 .auth-form h2, .create-form h2, .password-form h2 {
@@ -745,44 +748,65 @@ body {
 @media (max-width: 768px) {
     .header-content {
         padding: 0 16px;
+        gap: 12px;
     }
-    
+
+    .title {
+        font-size: 1.8em;
+    }
+
+    .btn-account {
+        padding: 8px 16px;
+        font-size: 16px;
+    }
+
     .toolbar {
         padding: 0 16px;
         flex-wrap: wrap;
     }
-    
+
     .threads-container,
     .thread-detail,
     .reply-detail {
         padding: 0 16px;
     }
-    
-    .thread-header {
+
+    .thread-detail .thread-header {
         flex-direction: column;
         align-items: stretch;
         gap: 12px;
     }
-    
+
     .thread-info {
         margin: 0;
     }
-    
+
     .message-input-row {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .modal {
         width: 95%;
         padding: 20px;
     }
-    
+
     .form-actions {
         flex-direction: column;
     }
-    
+
     .user-actions {
         flex-direction: column;
+    }
+}
+
+/* 追加のレスポンシブ修正 */
+@media (max-width: 480px) {
+    .title-main {
+        font-size: 1em;
+    }
+
+    .title-jp {
+        font-size: 0.9em;
     }
 }

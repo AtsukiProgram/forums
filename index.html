@@ -14,7 +14,7 @@
             <button class="logo-btn" id="logoBtn" tabindex="0">
                 <img src="assets/forums.png" alt="forums" class="logo-img">
             </button>
-            <div>
+            <div class="title-section">
                 <h1 class="title">
                     <span class="title-main">forums</span><br>
                     <span class="title-jp">フォーラム</span>
@@ -65,9 +65,9 @@
                     <button class="menu-option delete" id="deleteThreadBtn">🗑️ 削除</button>
                 </div>
             </div>
-            
+
             <div class="messages-container" id="messagesContainer"></div>
-            
+
             <div class="message-input-container hidden" id="messageInputContainer">
                 <div class="message-input-row">
                     <textarea class="message-input" id="messageInput" placeholder="メッセージを入力..."></textarea>
@@ -82,10 +82,10 @@
                 <button class="btn btn-back" id="replyBackBtn">← 戻る</button>
                 <h3>返信</h3>
             </div>
-            
+
             <div class="original-message" id="originalMessage"></div>
             <div class="replies-container" id="repliesContainer"></div>
-            
+
             <div class="reply-input-container hidden" id="replyInputContainer">
                 <div class="message-input-row">
                     <textarea class="reply-input" id="replyInput" placeholder="返信を入力..."></textarea>
@@ -97,14 +97,14 @@
 
     <!-- アカウントモーダル -->
     <div class="modal-overlay hidden" id="modalOverlay">
-        <div class="modal">
+        <div class="modal" id="modalContent">
             <!-- ログインフォーム -->
             <div class="auth-form" id="loginForm">
                 <h2>ログイン</h2>
                 <form id="loginFormElement">
                     <div class="form-group">
-                        <label>メールアドレス</label>
-                        <input type="email" id="loginEmail" required>
+                        <label>ユーザー名</label>
+                        <input type="text" id="loginUsername" required>
                     </div>
                     <div class="form-group">
                         <label>パスワード</label>
@@ -159,7 +159,7 @@
 
     <!-- スレッド作成モーダル -->
     <div class="modal-overlay hidden" id="createThreadOverlay">
-        <div class="modal">
+        <div class="modal" id="createThreadModal">
             <div class="create-form">
                 <h2>新しいスレッドを作成</h2>
                 <form id="createThreadForm">
@@ -198,7 +198,7 @@
 
     <!-- パスワード入力モーダル -->
     <div class="modal-overlay hidden" id="passwordOverlay">
-        <div class="modal">
+        <div class="modal" id="passwordModal">
             <div class="password-form">
                 <h2>パスワード入力</h2>
                 <p>このスレッドはパスワード保護されています。</p>
